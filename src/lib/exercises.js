@@ -30,6 +30,8 @@ export const EXERCISES = [
   { id: 'kettlebell-swing', name: 'Kettlebell Swing', category: 'hinge', image: new URL('../assets/images/exercises/kettlebell-swing.png', import.meta.url).href },
   { id: 'power-clean-barre', name: 'Power Clean avec Barre', category: 'hinge', image: new URL('../assets/images/exercises/power-clean-barre.png', import.meta.url).href },
   { id: 'pont-une-jambe', name: 'Pont à une Jambe', category: 'hinge', image: new URL('../assets/images/exercises/pont-une-jambe.png', import.meta.url).href },
+  { id: 'curls-nordiques', name: 'Curls Nordiques', category: 'hinge', image: new URL('../assets/images/exercises/curls-nordiques.png', import.meta.url).href },
+
                 
 
 
