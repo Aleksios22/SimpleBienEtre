@@ -47,20 +47,6 @@
 		if (audioUrl) {
 			URL.revokeObjectURL(audioUrl)
 		}
-
-		onMount(() => {
-			// If a bundled audio file exists in the assets folder, load it automatically
-			try {
-				const bundled = new URL('../assets/audio/Like A G6.mp3', import.meta.url).href
-				audioUrl = bundled
-				if (audioEl) {
-					audioEl.src = audioUrl
-				}
-			} catch (err) {
-				// file might not exist; fallback keeps file input for user selection
-				console.warn('Bundled audio not found or failed to load:', err)
-			}
-		})
 		audioUrl = URL.createObjectURL(f)
 		if (audioEl) {
 			audioEl.src = audioUrl
@@ -214,6 +200,22 @@
 		currentPage = 'smoking'
 		selectedSmoking = null
 	}
+
+onMount(() => {
+	// If a bundled audio file exists in the assets folder, load it automatically
+	try {
+		const bundled = new URL('../assets/audio/Like A G6.mp3', import.meta.url).href
+		audioUrl = bundled
+		if (audioEl) {
+			audioEl.src = audioUrl
+			audioEl.preload = 'auto'
+			audioEl.volume = 0.9
+		}
+	} catch (err) {
+		// file might not exist; fallback keeps file input for user selection
+		console.warn('Bundled audio not found or failed to load:', err)
+	}
+})
 </script>
 
 <style>
@@ -298,6 +300,19 @@
 		background-color: rgba(178,148,204,0.06);
 	}
 
+	.title-btn {
+		background: transparent;
+		border: none;
+		color: inherit;
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+	}
+
+
 	.favorites-btn:hover {
 		background-color: #c4a0d6;
 	}
@@ -320,7 +335,6 @@
 
 	.content {
 		flex: 1;
-		overflow-y: auto;
 		padding: 0.75rem;
 		padding-bottom: calc(84px + env(safe-area-inset-bottom));
 		display: flex;
@@ -545,24 +559,29 @@
 </style>
 
 <div class="app">
-	<header style="display: flex; justify-content: space-between; align-items: center;">
-		<div style="flex: 1; position: relative; display: flex; align-items: center;">
-				<button class="music-btn" on:click={toggleAudio} title="Lecture de la musique">{audioPlaying ? '⏸' : '🎵'}</button>
-				<div style="margin: 0 auto 0 3rem;">
-					<h1 style="margin: 0;">Simple Bien-être</h1>
-					<h3 style="margin: 0.25rem 0 0 0;">Le générateur</h3>
-					<input bind:this={fileInputEl} type="file" accept="audio/*" on:change={handleFileSelected} style="display:none" />
-					<audio bind:this={audioEl} on:ended={() => { audioPlaying = false }}></audio>
-				</div>
-				</div>
-		<button 
-			class="favorites-btn"
-			on:click={() => currentPage = 'favorites'}
-			title="Voir les séances favorites"
-		>
-			⭐{#if favorites.length > 0}<span class="favorites-badge">{favorites.length}</span>{/if}
+	<header style="display: flex; align-items: center; justify-content: space-between;">
+		<div style="width: 56px; display:flex; justify-content:flex-start;">
+			<button class="music-btn" on:click={toggleAudio} title="Lecture de la musique">{audioPlaying ? '⏸' : '🎵'}</button>
+		</div>
+
+		<button class="title-btn" on:click={goToMenu} aria-label="Aller au menu principal">
+			<h1 style="margin: 0;">Simple Bien-être</h1>
+			<h3 style="margin: 0.25rem 0 0 0;">Le générateur</h3>
 		</button>
+
+		<div style="width: 56px; display:flex; justify-content:flex-end;">
+			<button 
+				class="favorites-btn"
+				on:click={() => currentPage = 'favorites'}
+				title="Voir les séances favorites"
+			>
+				⭐{#if favorites.length > 0}<span class="favorites-badge">{favorites.length}</span>{/if}
+			</button>
+		</div>
 	</header>
+    
+	<input bind:this={fileInputEl} type="file" accept="audio/*" on:change={handleFileSelected} style="display:none" />
+	<audio bind:this={audioEl} on:ended={() => { audioPlaying = false }} preload="auto"></audio>
 
 	<div class="content">
 	{#if currentPage === 'menu'}
