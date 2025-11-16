@@ -17,6 +17,24 @@
 	let workoutName = '' // name for saving a workout
 	let favoritesHoverActive = false // for button hover state
 
+	// PWA install prompt state
+	let deferredInstallPrompt = null
+	let showInstallButton = false
+
+	function promptInstall() {
+		if (!deferredInstallPrompt) return
+		deferredInstallPrompt.prompt()
+		deferredInstallPrompt.userChoice.then(choiceResult => {
+			if (choiceResult.outcome === 'accepted') {
+				console.log('User accepted the A2HS prompt')
+			} else {
+				console.log('User dismissed the A2HS prompt')
+			}
+			deferredInstallPrompt = null
+			showInstallButton = false
+		})
+	}
+
 	// Audio / music player state
 	let audioUrl = null
 	let audioPlaying = false
@@ -215,6 +233,15 @@ onMount(() => {
 		// file might not exist; fallback keeps file input for user selection
 		console.warn('Bundled audio not found or failed to load:', err)
 	}
+
+	// listen for PWA beforeinstallprompt
+	if (typeof window !== 'undefined') {
+		window.addEventListener('beforeinstallprompt', (e) => {
+			e.preventDefault()
+			deferredInstallPrompt = e
+			showInstallButton = true
+		})
+	}
 })
 </script>
 
@@ -298,6 +325,24 @@ onMount(() => {
 
 	.music-btn:hover {
 		background-color: rgba(178,148,204,0.06);
+	}
+
+	.install-btn {
+		position: absolute;
+		right: 72px;
+		top: 50%;
+		transform: translateY(-50%);
+		background: linear-gradient(90deg,#b294cc,#c4a0d6);
+		border: none;
+		color: #1a1a1a;
+		padding: 0.45rem 0.6rem;
+		border-radius: 6px;
+		cursor: pointer;
+		font-weight: 600;
+	}
+
+	.install-btn:hover {
+		opacity: 0.95;
 	}
 
 	.title-btn {
@@ -583,7 +628,12 @@ onMount(() => {
 	<input bind:this={fileInputEl} type="file" accept="audio/*" on:change={handleFileSelected} style="display:none" />
 	<audio bind:this={audioEl} on:ended={() => { audioPlaying = false }} preload="auto"></audio>
 
+	{#if showInstallButton}
+		<button class="install-btn" on:click={promptInstall} title="Installer l'app">⬇️ Installer</button>
+	{/if}
+
 	<div class="content">
+	
 	{#if currentPage === 'menu'}
 		<div class="menu-container">
 			<h2 style="text-align: center; margin-top: 0;">Sélectionner une option</h2>
