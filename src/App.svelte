@@ -4,6 +4,7 @@
 	import { EXERCISES_1_MOVEMENT } from './lib/exercises-1-movement.js'
 	import { BREATHING_EXERCISES } from './lib/breathing.js'
 	import { SMOKING_METHODS } from './lib/smoking.js'
+	import { onMount } from 'svelte'
 
 	let currentPage = 'menu' // 'menu' | 'exercises-select' | 'exercises' | 'breathing' | 'smoking' | 'favorites'
 	let workoutType = null // null | 4 | 2 | 1
@@ -15,6 +16,58 @@
 	let favorites = JSON.parse(localStorage.getItem('favorites') || '[]') // load favorites from localStorage
 	let workoutName = '' // name for saving a workout
 	let favoritesHoverActive = false // for button hover state
+
+	// Audio / music player state
+	let audioUrl = null
+	let audioPlaying = false
+	/** @type {HTMLAudioElement|null} */
+	let audioEl = null
+	/** @type {HTMLInputElement|null} */
+	let fileInputEl = null
+
+	function toggleAudio() {
+		if (!audioUrl) {
+			// prompt user to choose a local file
+			if (fileInputEl) fileInputEl.click()
+			return
+		}
+		if (!audioEl) return
+		if (audioPlaying) {
+			if (audioEl) audioEl.pause()
+			audioPlaying = false
+		} else {
+			if (audioEl) audioEl.play()
+			audioPlaying = true
+		}
+	}
+
+	function handleFileSelected(e) {
+		const f = e.target.files && e.target.files[0]
+		if (!f) return
+		if (audioUrl) {
+			URL.revokeObjectURL(audioUrl)
+		}
+
+		onMount(() => {
+			// If a bundled audio file exists in the assets folder, load it automatically
+			try {
+				const bundled = new URL('../assets/audio/Like A G6.mp3', import.meta.url).href
+				audioUrl = bundled
+				if (audioEl) {
+					audioEl.src = audioUrl
+				}
+			} catch (err) {
+				// file might not exist; fallback keeps file input for user selection
+				console.warn('Bundled audio not found or failed to load:', err)
+			}
+		})
+		audioUrl = URL.createObjectURL(f)
+		if (audioEl) {
+			audioEl.src = audioUrl
+			audioEl.play()
+			audioPlaying = true
+		}
+	}
 
 	function pickExerciseAvoidingLast(availableExercises) {
 		// Filter out the last exercise to avoid consecutive duplicates
@@ -223,6 +276,28 @@
 		font-weight: bold;
 	}
 
+	.music-btn {
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+		background-color: transparent;
+		color: #b294cc;
+		border: 1px solid rgba(178,148,204,0.08);
+		border-radius: 50%;
+		width: 44px;
+		height: 44px;
+		font-size: 1.1rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.music-btn:hover {
+		background-color: rgba(178,148,204,0.06);
+	}
+
 	.favorites-btn:hover {
 		background-color: #c4a0d6;
 	}
@@ -247,6 +322,7 @@
 		flex: 1;
 		overflow-y: auto;
 		padding: 0.75rem;
+		padding-bottom: calc(84px + env(safe-area-inset-bottom));
 		display: flex;
 		flex-direction: column;
 		background-color: #1a1a1a;
@@ -327,7 +403,8 @@
 		border-radius: 8px;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		align-items: center;
 		padding: 0.6rem;
 		overflow: hidden;
 		cursor: pointer;
@@ -346,11 +423,20 @@
 	}
 
 	.card-image {
-		width: 100%;
-		height: 120px;
+		width: 80px;
+		height: 80px;
 		object-fit: cover;
 		border-radius: 6px;
-		margin-bottom: 0.4rem;
+		margin-left: 0.5rem;
+		flex-shrink: 0;
+	}
+
+	.card-body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		flex: 1 1 auto;
+		min-width: 0;
 	}
 
 	.card-category {
@@ -407,6 +493,33 @@
 		background-color: #c4a0d6;
 	}
 
+	/* Bottom bar fixed for mobile so controls are always visible */
+	.bottom-bar {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: env(safe-area-inset-bottom, 0);
+		display: flex;
+		display: none;
+		gap: 0.5rem;
+		padding: 0.5rem;
+		padding-bottom: calc(8px + env(safe-area-inset-bottom));
+		background: linear-gradient(180deg, rgba(15,20,25,0.95), rgba(15,20,25,0.98));
+		border-top: 1px solid rgba(178,148,204,0.08);
+		z-index: 60;
+		box-shadow: 0 -4px 12px rgba(0,0,0,0.6);
+	}
+
+	.bottom-input {
+		padding: 0.5rem;
+		background-color: #2a2a2a;
+		color: #e0e0e0;
+		border: 1px solid #b294cc;
+		border-radius: 6px;
+		font-size: 0.9rem;
+		flex: 1 1 auto;
+	}
+
 	.no-selection {
 		color: #888888;
 	}
@@ -425,15 +538,23 @@
 		.cards {
 			flex-direction: column;
 		}
+		.bottom-bar {
+			display: flex;
+		}
 	}
 </style>
 
 <div class="app">
 	<header style="display: flex; justify-content: space-between; align-items: center;">
-		<div style="flex: 1;">
-			<h1>Simple Bien-être</h1>
-			<h3>Le générateur</h3>
-		</div>
+		<div style="flex: 1; position: relative; display: flex; align-items: center;">
+				<button class="music-btn" on:click={toggleAudio} title="Lecture de la musique">{audioPlaying ? '⏸' : '🎵'}</button>
+				<div style="margin: 0 auto 0 3rem;">
+					<h1 style="margin: 0;">Simple Bien-être</h1>
+					<h3 style="margin: 0.25rem 0 0 0;">Le générateur</h3>
+					<input bind:this={fileInputEl} type="file" accept="audio/*" on:change={handleFileSelected} style="display:none" />
+					<audio bind:this={audioEl} on:ended={() => { audioPlaying = false }}></audio>
+				</div>
+				</div>
 		<button 
 			class="favorites-btn"
 			on:click={() => currentPage = 'favorites'}
@@ -447,9 +568,9 @@
 	{#if currentPage === 'menu'}
 		<div class="menu-container">
 			<h2 style="text-align: center; margin-top: 0;">Sélectionner une option</h2>
-			<button class="menu-button" on:click={goToExerciseSelect}>Générateur d'Exercices</button>
-			<button class="menu-button" on:click={goToBreathing}>Respiration et Conscience</button>
-			<button class="menu-button" on:click={goToSmoking}>Méthodes de Fumage</button>
+			<button class="menu-button" on:click={goToExerciseSelect}>🏋️‍♂️ Générateur d'Exercices</button>
+			<button class="menu-button" on:click={goToBreathing}>🧘 Respiration et Conscience</button>
+			<button class="menu-button" on:click={goToSmoking}>🚬 Méthodes de Fumage</button>
 		</div>
 	{/if}	{#if currentPage === 'exercises-select'}
 		<div class="page-header">
@@ -477,28 +598,18 @@
 						role="button"
 						tabindex="0"
 					>
+						<div class="card-body">
+							<h4 style="margin: 0; color: #e0e0e0; font-size: 0.95rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{ex.name}</h4>
+							<div class="card-category" style="margin-top: 0.35rem;">{capitalize(ex.category)}</div>
+						</div>
 						<img src={ex.image} alt={ex.name} class="card-image" />
-						<div class="card-category" style="margin-bottom: 0.5rem;">{capitalize(ex.category)}</div>
-						<h4 style="margin: 0; color: #e0e0e0; font-size: 0.95rem; text-align: center;">{ex.name}</h4>
 					</div>
 				{/each}
 			{:else}
 				<div class="no-selection">Aucun exercice sélectionné. Cliquez sur le bouton pour générer des exercices.</div>
 			{/if}
 		</div>
-		<button class="action-button" on:click={() => pickBalancedExercises(workoutType)}>Générer</button>
-		
-		{#if selectedExercises.length > 0}
-			<div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0;">
-				<input
-					type="text"
-					bind:value={workoutName}
-					placeholder="Nom de la séance..."
-					style="padding: 0.6rem; background-color: #2a2a2a; color: #e0e0e0; border: 1px solid #b294cc; border-radius: 5px; font-size: 0.9rem;"
-				/>
-				<button class="action-button" on:click={saveWorkout}>💾 Sauvegarder</button>
-			</div>
-		{/if}
+
 	{/if}	{#if currentPage === 'breathing'}
 		<div class="page-header">
 			<button class="back-button" on:click={goToMenu}>← Retour</button>
@@ -553,7 +664,9 @@
 									<button class="action-button" style="flex: 1; padding: 0.5rem; font-size: 0.9rem;" on:click={() => { selectedExercises = fav.exercises; selectedExerciseIds = new Set(fav.exercises.map(e => e.id)); workoutType = fav.type; currentPage = 'exercises'; }}>Charger</button>
 									<button class="action-button" style="flex: 1; padding: 0.5rem; font-size: 0.9rem; background-color: #9a6b9a;" on:click={() => { deleteFavorite(fav.id); favorites = favorites; }}>Supprimer</button>
 								</div>
-							</div>
+
+
+								</div>
 						</div>
 					{/each}
 				</div>
@@ -563,5 +676,12 @@
 				</div>
 			{/if}
 		{/if}
+	{#if currentPage === 'exercises'}
+		<div class="bottom-bar">
+			<input class="bottom-input" type="text" bind:value={workoutName} placeholder="Nom de la séance..." />
+			<button class="action-button" on:click={() => pickBalancedExercises(workoutType)} style="flex: 0 0 110px;">Générer</button>
+			<button class="action-button" on:click={saveWorkout} style="flex: 0 0 110px;">💾 Sauvegarder</button>
+		</div>
+	{/if}
 	</div>
 </div>
