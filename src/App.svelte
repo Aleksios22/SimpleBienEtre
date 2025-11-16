@@ -185,15 +185,22 @@
 	header {
 		background-color: #0f1419;
 		color: #b294cc;
-		padding: 1rem;
+		padding: 0.75rem;
 		text-align: center;
 		border-bottom: 1px solid rgba(178, 148, 204, 0.2);
 		position: relative;
+		flex-shrink: 0;
 	}
 
 	header h1 {
 		margin: 0;
-		font-size: 1.5rem;
+		font-size: 1.2rem;
+	}
+
+	header h3 {
+		margin: 0.25rem 0 0 0;
+		font-size: 0.85rem;
+		font-weight: 400;
 	}
 
 	.favorites-btn {
@@ -239,7 +246,7 @@
 	.content {
 		flex: 1;
 		overflow-y: auto;
-		padding: 1.25rem;
+		padding: 0.75rem;
 		display: flex;
 		flex-direction: column;
 		background-color: #1a1a1a;
@@ -249,18 +256,20 @@
 	.menu-container {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.75rem;
 		max-width: 600px;
-		margin: 2rem auto;
+		margin: 1.5rem auto;
+		width: 100%;
+		padding: 0 0.5rem;
 	}
 
 	.menu-button {
-		padding: 1rem 1.5rem;
-		font-size: 1.1rem;
+		padding: 0.75rem 1rem;
+		font-size: 0.95rem;
 		background-color: #b294cc;
 		color: #1a1a1a;
 		border: none;
-		border-radius: 8px;
+		border-radius: 6px;
 		cursor: pointer;
 		transition: background-color 0.2s;
 		font-weight: 600;
@@ -274,19 +283,21 @@
 	.page-header {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
-		margin-bottom: 1.5rem;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+		flex-shrink: 0;
 	}
 
 	.back-button {
-		padding: 0.5rem 1rem;
+		padding: 0.4rem 0.8rem;
 		background-color: #333333;
 		color: #b294cc;
 		border: 1px solid #b294cc;
-		border-radius: 6px;
+		border-radius: 5px;
 		cursor: pointer;
-		font-size: 0.95rem;
+		font-size: 0.8rem;
 		transition: background-color 0.2s;
+		flex-shrink: 0;
 	}
 
 	.back-button:hover {
@@ -295,7 +306,7 @@
 
 	.page-title {
 		margin: 0;
-		font-size: 1.5rem;
+		font-size: 1.2rem;
 		color: #b294cc;
 	}
 
@@ -303,22 +314,25 @@
 	.cards {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
+		gap: 8px;
 		width: 100%;
-		margin-bottom: 1.5rem;
+		margin-bottom: 0.75rem;
+		flex: 1;
+		overflow-y: auto;
 	}
 
 	.card {
 		background: #2a2a2a;
 		border: 2px solid #333333;
-		border-radius: 10px;
+		border-radius: 8px;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 		display: flex;
 		flex-direction: column;
-		padding: 0.9rem;
+		padding: 0.6rem;
 		overflow: hidden;
 		cursor: pointer;
 		transition: all 0.2s;
+		flex-shrink: 0;
 	}
 
 	.card:hover {
@@ -333,10 +347,10 @@
 
 	.card-image {
 		width: 100%;
-		height: 200px;
+		height: 120px;
 		object-fit: cover;
 		border-radius: 6px;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.4rem;
 	}
 
 	.card-category {
@@ -377,15 +391,16 @@
 	/* Button styles */
 	.action-button {
 		width: 100%;
-		padding: 0.75rem 1rem;
+		padding: 0.6rem 0.8rem;
 		background-color: #b294cc;
 		color: #1a1a1a;
 		border: none;
-		border-radius: 8px;
-		font-size: 1rem;
+		border-radius: 6px;
+		font-size: 0.9rem;
 		cursor: pointer;
 		transition: background-color 0.2s;
 		font-weight: 600;
+		flex-shrink: 0;
 	}
 
 	.action-button:hover {
@@ -474,14 +489,14 @@
 		<button class="action-button" on:click={() => pickBalancedExercises(workoutType)}>Générer</button>
 		
 		{#if selectedExercises.length > 0}
-			<div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+			<div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0;">
 				<input
 					type="text"
 					bind:value={workoutName}
 					placeholder="Nom de la séance..."
-					style="padding: 0.75rem; background-color: #2a2a2a; color: #e0e0e0; border: 1px solid #b294cc; border-radius: 6px; font-size: 1rem;"
+					style="padding: 0.6rem; background-color: #2a2a2a; color: #e0e0e0; border: 1px solid #b294cc; border-radius: 5px; font-size: 0.9rem;"
 				/>
-				<button class="action-button" on:click={saveWorkout}>💾 Sauvegarder la séance</button>
+				<button class="action-button" on:click={saveWorkout}>💾 Sauvegarder</button>
 			</div>
 		{/if}
 	{/if}	{#if currentPage === 'breathing'}
