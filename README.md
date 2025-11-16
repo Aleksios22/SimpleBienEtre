@@ -1,43 +1,139 @@
-# Svelte + Vite
+# Simple Bien-être 🏋️
 
-This template should help get you started developing with Svelte in Vite.
+Une application web mobile-first pour générer des séances d'entraînement personnalisées, des exercices de respiration et des méthodes de consommation.
 
-## Recommended IDE Setup
+## 🌟 Fonctionnalités
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+### Générateur d'Exercices
+- **4 mouvements équilibrés** : Push, Pull, Squat, Hinge
+- **Options flexibles** : 4 mouvements, 2 mouvements, ou 1 mouvement
+- **Sélection intelligente** : Aucune répétition d'exercice consécutive
+- **Épingles personnalisées** : Cliquez sur les cartes pour les verrouiller lors de la régénération
+- **Sauvegarde de séances** : Nommez et sauvegardez vos séances préférées
 
-## Need an official Svelte framework?
+### Respiration & Conscience
+- 6 exercices de respiration guidés
+- Box Breathing, Wim Hof, 4-7-8 Breathing, et plus...
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+### Méthodes de Fumage
+- 6 méthodes différentes avec descriptions visuelles
+- Guide complet des techniques
 
-## Technical considerations
+### Favoris
+- Sauvegardez vos séances d'entraînement préférées
+- Accédez rapidement à vos favoris depuis le coin supérieur droit
+- Persistance avec localStorage
 
-**Why use this over SvelteKit?**
+## 🎨 Design
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+- **Thème Mauve** : Interface moderne et relaxante
+- **Mobile-First** : Optimisé pour tous les appareils
+- **Mode Sombre** : Facile pour les yeux
+- **Interface Française** : Entièrement traduite
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+## 🚀 Démarrage Rapide
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+### Prérequis
+- Node.js 16+ 
+- npm ou yarn
 
-**Why include `.vscode/extensions.json`?**
+### Installation
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+```bash
+# Cloner le repository
+git clone https://github.com/Aleksios22/SimpleBienEtre.git
+cd SimpleBienEtre
 
-**Why enable `checkJs` in the JS template?**
+# Installer les dépendances
+npm install
 
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+# Lancer le serveur de développement
+npm run dev
 ```
+
+Le site sera accessible à `http://localhost:5174`
+
+### Build pour la Production
+
+```bash
+npm run build
+```
+
+Les fichiers compilés seront dans le dossier `dist/`
+
+## 📱 Structure du Projet
+
+```
+src/
+├── App.svelte              # Composant principal
+├── lib/
+│   ├── exercises.js        # Base de données des 27 exercices
+│   ├── exercises-2-movements.js  # Base de données (2 mouvements)
+│   ├── exercises-1-movement.js   # Base de données (1 mouvement)
+│   ├── breathing.js        # Exercices de respiration
+│   └── smoking.js          # Méthodes de fumage
+├── assets/images/
+│   ├── exercises/          # Images des exercices
+│   ├── breathing/          # Images des respirations
+│   └── smoking/            # Images des méthodes
+└── main.js                 # Point d'entrée
+
+```
+
+## 🔧 Technologies
+
+- **Svelte** : Framework réactif léger
+- **Vite** : Build tool ultra-rapide
+- **localStorage API** : Persistance des données
+- **CSS3** : Styling responsive
+
+## 💾 Persistence des Données
+
+L'application utilise `localStorage` pour:
+- Sauvegardez vos séances d'entraînement préférées
+- Les données persistent après fermeture du navigateur
+
+## 📊 Catégories d'Exercices
+
+### Push (10 exercices)
+Push-ups, Mountain Climber, Shoulder Press, Chandelle, etc.
+
+### Pull (4 exercices)
+Tractions, Body Rows, Front Lever Groupé, Rowing Barre
+
+### Squat (8 exercices)
+Squats, Lunges, Squats Explosifs, Squats Pistolet, etc.
+
+### Hinge (6 exercices)
+Deadlift, Crunch Vélo, Kettlebell Swing, Power Clean, etc.
+
+## 🌐 Déploiement
+
+L'application peut être déployée facilement sur:
+- **Netlify** : `npm run build` → drag & drop le dossier `dist/`
+- **Vercel** : Push vers GitHub et connectez le repo
+- **GitHub Pages** : Configurez les Actions GitHub
+
+## 🤝 Contribution
+
+Les contributions sont bienvenues! N'hésitez pas à:
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📝 License
+
+Ce projet est sous la License MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 👨‍💻 Auteur
+
+**Aleksios22** - [GitHub](https://github.com/Aleksios22)
+
+## 🙏 Remerciements
+
+- Svelte et Vite pour les outils exceptionnels
+- Tous les contributeurs et utilisateurs
+
+
